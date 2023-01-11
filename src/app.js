@@ -94,6 +94,16 @@ app.get("/users/username/:username", async(req, res) => {
     }
 });
 
+// obtener un usario por username
+app.get("/todos/todosname/:todosname", async(req, res) => {
+    try {
+        const {username} = req.params;
+        const result = await Users.findOne({where: {username}}); // SELECT * FROM users WHERE username = Ronaldo
+        res.status(200).json(result);
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 // // obtener un tareas por title
 // app.get("/todos/title/:title", async(req, res) => {
@@ -119,12 +129,41 @@ app.post("/users", async(req, res) => {
 });
 
 
+// Crear un usuario  todos
+app.post("/todos", async(req, res) => {
+    try {
+        const todo = req.body;
+        const result = await Todos.create(todo);
+        res.status(201).json(result);
+    } catch (error) {
+        res.status(400).json(error.message);
+        console.log(error)
+    }
+});
+
+
 // Actualizar un usuario
 app.put("/users/:id", async(req, res) => {
     try {
         const { id } = req.params;
         const field = req.body;
         const result = await Users.update(field, {
+            where: {id}
+        }); 
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json(error.message);
+        console.log(error)
+    }
+}); 
+
+
+// Actualizar un usuario todos
+app.put("/todos/:id", async(req, res) => {
+    try {
+        const { id } = req.params;
+        const field = req.body;
+        const result = await Todos.update(field, {
             where: {id}
         }); 
         res.status(200).json(result);
@@ -148,6 +187,23 @@ app.delete("/users/:id", async(req, res) => {
         console.log(error)
     }
 })
+
+
+// Eliminar un usuario
+app.delete("/todos/:id", async(req, res) => {
+    try {
+        const {id} = req.params; 
+        const result = await Todos.destroy({
+            where: {id},
+        }); 
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json(error.message);
+        console.log(error)
+    }
+})
+
+
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`)
